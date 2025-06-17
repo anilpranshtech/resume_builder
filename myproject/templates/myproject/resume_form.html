@@ -1,0 +1,328 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if is_edit %}✏️ Edit Resume{% else %}📝 Create Resume{% endif %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            max-width: 800px;
+            width: 100%;
+            overflow-y: auto;
+            max-height: 95vh;
+        }
+
+        .emoji {
+            font-size: 60px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .section-title {
+            margin-top: 30px;
+            font-size: 20px;
+            color: #2c3e50; 
+            border-left: 4px solid; 
+            padding-left: 10px;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #444; 
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 15px;
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+
+        button[type="submit"] {
+            margin-top: 25px;
+            padding: 12px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px; 
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        .download-btn {
+            margin-top: 15px;
+            padding: 10px 15px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px; 
+            cursor: pointer;
+            font-size: 15px;
+            width: 100%;
+        }
+
+        .errorlist {
+            color: #e74c3c;
+            font-size: 14px;
+            margin: 5px 0 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        {% if is_edit %}
+            .download-btn {
+                display: none;
+            }
+        {% endif %}
+
+        .profile-picture-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid #ddd;
+            display: block;
+            margin-left: auto; 
+            margin-right: auto;
+        }
+
+
+        @media (max-width: 600px) {
+            .container { padding: 20px 15px; }
+            h2 { font-size: 20px; }
+            .section-title { font-size: 18px; }
+        }
+
+        @media print {
+            .download-btn, .emoji, button[type="submit"] {
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+                margin: 0;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none !important;
+                border-radius: 0;
+                max-height: none;
+                height: auto;
+                padding: 40px;
+            }
+
+            input, textarea {
+                border: none;
+                padding: 0;
+                font-size: 14px;
+                color: #000;
+            }
+
+            label {
+                font-weight: bold;
+                margin-bottom: 2px;
+                color: #000;
+            }
+
+            .form-group {
+                margin-bottom: 10px;
+            }
+
+            .section-title {
+                color: #000;
+                border-color: #000;
+            }
+            .profile-picture-preview {
+                display: none !important; 
+            }
+        }
+
+        {% if selected_theme == 'modern' %}
+        body {
+            background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+        }
+        .section-title {
+            border-left-color: #6a89cc; 
+        }
+        input:focus, textarea:focus {
+            border-color: #6a89cc;
+        }
+        button[type="submit"] {
+            background-color: #6a89cc;
+        }
+        button[type="submit"]:hover {
+            background-color: #4a69bd;
+        }
+        .download-btn {
+            background-color: #27ae60;
+        }
+        {% endif %}
+
+        {% if selected_theme == 'classic' %}
+        body {
+            background-color: #f4f4f4;
+        }
+        .section-title {
+            border-left-color: #888; 
+        }
+        input:focus, textarea:focus {
+            border-color: #888;
+        }
+        button[type="submit"] {
+            background-color: #6c757d;
+        }
+        button[type="submit"]:hover {
+            background-color: #5a6268;
+        }
+        .download-btn {
+            background-color: #3498db;
+        }
+        {% endif %}
+
+        {% if selected_theme == 'minimal' %}
+        body {
+            background-color: #f8f8f8;
+        }
+        .section-title {
+            border-left-color: #2ecc71; 
+        }
+        input:focus, textarea:focus {
+            border-color: #2ecc71;
+        }
+        button[type="submit"] {
+            background-color: #2ecc71;
+        }
+        button[type="submit"]:hover {
+            background-color: #27ae60;
+        }
+        .download-btn {
+            background-color: #9b59b6;
+        }
+        {% endif %}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="emoji">{% if is_edit %}✏️{% else %}🧾{% endif %}</div>
+    <h2>{% if is_edit %}Edit Your Resume{% else %}Create Your Resume{% endif %}</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="section-title">Basic Details</div>
+
+        {% if is_edit and resume_form.instance.profile_picture %}
+            <div class="form-group" style="text-align: center;">
+                <label>Current Profile Picture</label>
+                <img src="{{ resume_form.instance.profile_picture.url }}" alt="Profile Picture" class="profile-picture-preview">
+            </div>
+        {% endif %}
+
+        {% for field in resume_form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="section-title">Education</div>
+        {% for field in education_form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="section-title">Experience</div>
+        {% for field in experience_form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="section-title">Skills</div>
+        {% for field in skill_form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="section-title">Projects</div>
+        {% for field in project_form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit">
+            {% if is_edit %}💾 Update Resume{% else %}➕ Save Resume{% endif %}
+        </button>
+    </form>
+
+    <button class="download-btn" onclick="window.print()">⬇️ Download as PDF</button>
+
+</div>
+</body>
+</html>

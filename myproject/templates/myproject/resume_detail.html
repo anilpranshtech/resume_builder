@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ resume.full_name }}'s Resume</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 40px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #a1c4fd, #c2e9fb); 
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 800px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            margin: auto;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .section {
+            margin-top: 30px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            font-size: 18px;
+            border-left: 4px solid;
+            padding-left: 10px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .btn-print {
+            margin-bottom: 20px;
+        }
+
+        /* Profile picture styling */
+        .profile-picture-display {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 3px solid;
+            margin: 0 auto 20px auto;
+            display: block;
+        }
+        .personal-info {
+            text-align: center;
+            margin-bottom: 30px; 
+        }
+        .personal-info p {
+            margin-bottom: 5px;
+        }
+
+        @media print {
+            .btn-print, .btn-secondary { 
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none !important;
+                margin: 0;
+                padding: 0;
+            }
+            .profile-picture-display {
+                border: none !important; 
+                width: 100px; 
+                height: 100px;
+            }
+            h2, .personal-info p {
+                color: #000 !important; 
+            }
+            .section-title {
+                border-left-color: #000 !important; 
+                color: #000 !important;
+            }
+        }
+        {% if resume.theme == 'modern' %}
+        body {
+            background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+        }
+        .section-title {
+            border-left-color: #6a89cc; 
+        }
+        .profile-picture-display {
+            border-color: #6a89cc;
+        }
+        .btn-primary { background-color: #6a89cc; border-color: #6a89cc; }
+        .btn-primary:hover { background-color: #4a69bd; border-color: #4a69bd; }
+        {% endif %}
+
+        {% if resume.theme == 'classic' %}
+        body {
+            background-color: #f4f4f4;
+        }
+        .section-title {
+            border-left-color: #888; 
+        }
+        .profile-picture-display {
+            border-color: #888;
+        }
+        .btn-primary { background-color: #6c757d; border-color: #6c757d; }
+        .btn-primary:hover { background-color: #5a6268; border-color: #5a6268; }
+        {% endif %}
+
+        {% if resume.theme == 'minimal' %}
+        body {
+            background-color: #f8f8f8;
+        }
+        .section-title {
+            border-left-color: #2ecc71; 
+        }
+        .profile-picture-display {
+            border-color: #2ecc71;
+        }
+        .btn-primary { background-color: #2ecc71; border-color: #2ecc71; }
+        .btn-primary:hover { background-color: #27ae60; border-color: #27ae60; }
+        {% endif %}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="text-end btn-print">
+        <button onclick="window.print()" class="btn btn-primary">🖨️ Download / Print PDF</button>
+    </div>
+
+    {% if resume.profile_picture %}
+        <img src="{{ resume.profile_picture.url }}" alt="Profile Picture" class="profile-picture-display">
+    {% endif %}
+
+    <div class="personal-info">
+        <h2>{{ resume.full_name }}</h2>
+        <p><strong>Email:</strong> {{ resume.email }}</p>
+        <p><strong>Phone:</strong> {{ resume.phone }}</p>
+        <p><strong>Location:</strong> {{ resume.location }}</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Summary</div>
+        <p>{{ resume.summary }}</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Education</div>
+        {% for edu in resume.education_set.all %}
+            <p><strong>{{ edu.degree }}</strong> - {{ edu.institution }} ({{ edu.start_year }} - {{ edu.end_year }})</p>
+        {% empty %}
+            <p>No education details available.</p>
+        {% endfor %}
+    </div>
+
+    <div class="section">
+        <div class="section-title">Experience</div>
+        {% for exp in resume.experience_set.all %}
+            <p><strong>{{ exp.job_title }}</strong> at {{ exp.company }} ({{ exp.start_year }} - {{ exp.end_year }})</p>
+            <p>{{ exp.description }}</p>
+        {% empty %}
+            <p>No experience details available.</p>
+        {% endfor %}
+    </div>
+
+    <div class="section">
+        <div class="section-title">Skills</div>
+        <ul>
+            {% for skill in resume.skill_set.all %}
+                <li>{{ skill.name }}</li>
+            {% empty %}
+                <li>No skills added.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Projects</div>
+        {% for project in resume.project_set.all %}
+            <p><strong>{{ project.title }}</strong></p>
+            <p>{{ project.description }}</p>
+        {% empty %}
+            <p>No projects listed.</p>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'resume_list' %}" class="btn btn-secondary mt-4">⬅️ Back to Resumes</a>
+</div>
+</body>
+</html>
